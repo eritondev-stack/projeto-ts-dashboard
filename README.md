@@ -1,4 +1,4 @@
-# typescript-app-v2
+# Vue with TypeScript
 
 ## Project setup
 ```
