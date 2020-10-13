@@ -84,16 +84,16 @@ export default class HelloWorld extends Vue {
   }
 
   mounted () {
-    this.calcular()
+    this.calculator()
   }
 
-  calcular () {
-    this.prencherCalenario('dev', this.inicioDev, this.fimDev)
-    this.prencherCalenario('hom', this.inicioHom, this.fimHom)
-    this.prencherCalenario('prod', this.inicioPro, this.fimPro)
+  calculator () {
+    this.fillCalendar('dev', this.inicioDev, this.fimDev)
+    this.fillCalendar('hom', this.inicioHom, this.fimHom)
+    this.fillCalendar('prod', this.inicioPro, this.fimPro)
   }
 
-  prencherCalenario (etapa: string, dtInicio: string, dtFim: string) {
+  fillCalendar (etapa: string, dtInicio: string, dtFim: string) {
     let tr!: NodeListOf<HTMLTableDataCellElement>
 
     // eslint-disable-next-line eqeqeq
@@ -110,7 +110,7 @@ export default class HelloWorld extends Vue {
     if (etapa == 'prod') {
       tr = this.$refs.prod.querySelectorAll('td')
     }
-    console.log(tr)
+
     for (let index = 0; index < tr.length; index++) {
       // eslint-disable-next-line eqeqeq
       if (index == 0) {

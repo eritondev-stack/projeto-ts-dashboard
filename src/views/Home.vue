@@ -1,5 +1,7 @@
 <template>
   <div class="home">
+    <button @click="verify()">Press me</button>
+    <InputCustom id="nome" placeholder="Digite seu nome" v-model="nome" />
     <table>
       <thead>
         <th>Projeto</th>
@@ -26,6 +28,18 @@
         fimHom="2020-09-01"
         inicioPro="2020-06-01"
         fimPro="2020-12-01"
+        @testando="ir"
+      >
+      </Projetos>
+
+            <Projetos
+        inicioDev="2020-01-01"
+        fimDev="2020-07-01"
+        inicioHom="2020-02-01"
+        fimHom="2020-09-01"
+        inicioPro="2020-06-01"
+        fimPro="2020-12-01"
+        @testando="ir"
       >
       </Projetos>
 
@@ -34,15 +48,32 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import Projetos from '@/components/Projetos.vue' // @ is an alias to /src
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import Projetos from '@/components/Projetos.vue'
+import InputCustom from '@/components/InputCustom.vue'
 
 @Component({
   components: {
-    Projetos
+    Projetos,
+    InputCustom
   }
 })
 export default class Home extends Vue {
+  private nome = '';
+
+  ir (value: string) {
+    console.log(value)
+  }
+
+  verify () {
+    this.$router.push('/about')
+  }
+
+   @Watch('nome')
+  newValue (newValue: string, oldValue: string) {
+    console.log('Novo Valor' + newValue)
+    console.log('Antigo Valor' + oldValue)
+  }
 }
 </script>
 
