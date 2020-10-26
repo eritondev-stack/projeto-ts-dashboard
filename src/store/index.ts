@@ -4,5 +4,11 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
+    name: 'eriton'
+  },
+  mutations: {
+    changeName (state, payload) {
+      state.name = payload
+    }
   }
 })

@@ -10,7 +10,7 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component
 export default class AppMain extends Vue {
   created () {
-    this.$router.push('/')
+    // this.$router.push('/about')
   }
 }
 </script>

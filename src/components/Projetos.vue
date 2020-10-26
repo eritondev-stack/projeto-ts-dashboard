@@ -50,9 +50,13 @@
       <td id="p-2020-12-01"></td>
     </tr>
     <tr>
+     <transition
+     enter-active-class="animate__animated animate__flipInX"
+     >
       <td v-show="visivel" colspan="15" class="box-tratar">
         <slot></slot>
       </td>
+      </transition>
     </tr>
 
     <tr colspan="15" height="10"></tr>

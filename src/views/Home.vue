@@ -1,7 +1,8 @@
 <template>
   <div class="home">
-    <button @click="verify()">Press me</button>
-    <InputCustom id="nome" placeholder="Digite seu nome" v-model="nome" />
+    <button @click="about()">Press me</button>
+    <InputCustom id="nome" placeholder="Digite seu nome"  v-model="nome" />
+    <h1>{{ getName }}</h1>
     <table>
       <thead>
         <th>Projeto</th>
@@ -30,19 +31,32 @@
         fimPro="2020-12-01"
         @testando="ir"
       >
+      <div>
+       asdasdasds
+      </div>
       </Projetos>
 
-            <Projetos
+      <Projetos
         inicioDev="2020-01-01"
         fimDev="2020-07-01"
         inicioHom="2020-02-01"
-        fimHom="2020-09-01"
+        fimHom="2020-05-01"
         inicioPro="2020-06-01"
         fimPro="2020-12-01"
         @testando="ir"
       >
       </Projetos>
 
+            <Projetos
+        inicioDev="2020-01-01"
+        fimDev="2020-07-01"
+        inicioHom="2020-02-01"
+        fimHom="2020-05-01"
+        inicioPro="2020-06-01"
+        fimPro="2020-12-01"
+        @testando="ir"
+      >
+      </Projetos>
     </table>
   </div>
 </template>
@@ -65,14 +79,24 @@ export default class Home extends Vue {
     console.log(value)
   }
 
-  verify () {
+  // pegar nome da store
+  get getName (): string {
+    return this.$store.state.name
+  }
+
+  // alterar nome da store
+  changeName (value: string) {
+    this.$store.commit('changeName', value)
+  }
+
+  about () {
     this.$router.push('/about')
   }
 
-   @Watch('nome')
+  @Watch('nome')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   newValue (newValue: string, oldValue: string) {
-    console.log('Novo Valor' + newValue)
-    console.log('Antigo Valor' + oldValue)
+    this.changeName(newValue)
   }
 }
 </script>

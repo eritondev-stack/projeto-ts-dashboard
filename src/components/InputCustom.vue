@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <div class="bordar d-flex">
+    <div class="bordar">
       <input
         type="text"
         :id="id"
