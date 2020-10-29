@@ -1,9 +1,15 @@
 <template>
-  <div class="home">
-    <button @click="about()">Press me</button>
-    <InputCustom id="nome" placeholder="Digite seu nome"  v-model="nome" />
-    <h1>{{ getName }}</h1>
-    <table>
+  <div class="grid grid-cols-12 p-5 absolute">
+   <div class="col-span-6">
+      <button class="btn bg-green-500 hover:bg-green-600 text-white" @click="about()">Press me</button>
+   </div>
+      <div class="col-span-6">
+      <InputCustom id="nome" placeholder="Digite seu nome"  v-model="nome" />
+   </div>
+
+   <div class="col-span-12">
+       <h1 class="text-red-600 mt-5">{{ name }}</h1>
+    <table class="mt-5">
       <thead>
         <th>Projeto</th>
         <th>Progressão</th>
@@ -29,7 +35,6 @@
         fimHom="2020-09-01"
         inicioPro="2020-06-01"
         fimPro="2020-12-01"
-        @testando="ir"
       >
       <div>
        asdasdasds
@@ -43,7 +48,6 @@
         fimHom="2020-05-01"
         inicioPro="2020-06-01"
         fimPro="2020-12-01"
-        @testando="ir"
       >
       </Projetos>
 
@@ -54,10 +58,10 @@
         fimHom="2020-05-01"
         inicioPro="2020-06-01"
         fimPro="2020-12-01"
-        @testando="ir"
       >
       </Projetos>
     </table>
+   </div>
   </div>
 </template>
 
@@ -65,6 +69,8 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import Projetos from '@/components/Projetos.vue'
 import InputCustom from '@/components/InputCustom.vue'
+import { namespace } from 'vuex-class'
+const user = namespace('User')
 
 @Component({
   components: {
@@ -75,28 +81,27 @@ import InputCustom from '@/components/InputCustom.vue'
 export default class Home extends Vue {
   private nome = '';
 
-  ir (value: string) {
-    console.log(value)
-  }
+  @user.State
+  public name!: string
 
-  // pegar nome da store
-  get getName (): string {
-    return this.$store.state.name
-  }
+  @user.Mutation
+  public updateName!: (newName: string) => void
 
-  // alterar nome da store
-  changeName (value: string) {
-    this.$store.commit('changeName', value)
-  }
+  @user.Mutation
+  public setTransL!: (newName: string) => void
+
+  @user.Mutation
+  public setTransE!: (newName: string) => void
 
   about () {
+    this.setTransE('animate__animated animate__slideInRight animate__faster')
+    this.setTransL('animate__animated animate__slideOutLeft animate__faster')
     this.$router.push('/about')
   }
 
   @Watch('nome')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  newValue (newValue: string, oldValue: string) {
-    this.changeName(newValue)
+  newValue (newValue: string) {
+    this.updateName(newValue)
   }
 }
 </script>
@@ -109,54 +114,13 @@ th {
 td {
   border: 1px solid rgb(151, 151, 151);
 }
+  .btn {
+    width: 50%;
+    border-radius: 9px;
+    padding: 5px;
+    border: none;
+    outline:none;
+    cursor: pointer;
+  }
 
-.click {
-  cursor: pointer;
-}
-
-.an {
-  background-color: white;
-  border: 1px solid rgb(151, 151, 151);
-}
-
-.ag {
-  background-color: blueviolet;
-  border-color: blueviolet;
-}
-.back {
-  background: cover;
-  background: #d9e3e7;
-  padding: 30px;
-  height: 100vh;
-}
-
-.box-dash {
-  width: 100%;
-  background-color: white;
-}
-
-.text-projeto {
-  color: #3e9efa;
-  font-weight: bold;
-  font-size: 21px;
-}
-
-.text-capacity {
-  color: #faba48;
-  font-weight: bold;
-  font-size: 21px;
-}
-
-.icon-more {
-  top: -30px;
-  position: relative;
-  cursor: pointer;
-}
-
-.logout-icon {
-  width: 40px;
-  position: relative;
-  top: -10px;
-  cursor: pointer;
-}
 </style>

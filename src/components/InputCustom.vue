@@ -1,5 +1,8 @@
 <template>
-  <div class="main">
+  <div class="container border-red-600">
+     <div class="flex title-op">
+    <span>{{ title }}</span>
+  </div>
     <div class="bordar">
       <input
         type="text"
@@ -18,6 +21,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 export default class InputCustom extends Vue {
   @Prop() id!: string;
   @Prop() placeholder!: string;
+  @Prop() title!: string;
 
   updateValue (value: string) {
     this.$emit('input', value)
@@ -26,9 +30,6 @@ export default class InputCustom extends Vue {
 </script>
 
 <style scoped lang="scss">
-.main {
-  font-family: "Bitter", serif;
-}
 
 textarea:focus,
 input:focus,
@@ -36,6 +37,7 @@ select:focus {
   box-shadow: 0 0 0 0;
   border: 0 none;
   outline: 0;
+  color: #707070;
 }
 
 textarea,
@@ -44,6 +46,7 @@ select {
   box-shadow: 0 0 0 0;
   border: 0 none;
   outline: 0;
+  color: #707070;
 }
 
 input {
@@ -57,15 +60,10 @@ input {
 
 .bordar {
   border: none;
-  border-radius: 10px;
-  background-color: #e6e6e6;
+  border-radius: 5px;
+  background-color: #F3F6FB;
   font-weight: bold;
-}
-
-.spanzin {
-  font-size: 12px;
-  color: red;
-  height: 200px;
+  border: 1px solid #D6D6D6;
 }
 
 .icone-tm {
@@ -74,5 +72,9 @@ input {
   margin-top: 3px;
   margin-left: 6px;
   color: #707070;
+}
+.title-op{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: #707070;
 }
 </style>

@@ -67,10 +67,6 @@ export default class Oil extends Vue {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  mounted () {
-  }
-
   svgVerify () {
     this.$refs.svg.classList.add('animate__animated', 'animate__jello', 'animate__infinite')
   }

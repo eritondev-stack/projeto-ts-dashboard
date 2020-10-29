@@ -1,9 +1,9 @@
 <template>
   <div class="main">
-      <div class="d-flex title-op">
+      <div class="flex title-op">
     <span>{{ title }}</span>
   </div>
-    <div ref="div" class="bordar d-flex">
+    <div ref="div" class="bordar flex">
            <input
         ref="input"
         type="text"
@@ -12,15 +12,15 @@
         @click="updateValue()"
         v-debounce:500ms="updateValue"
       />
-                   <div class="formater-seta d-flex justify-content-center">
+    <div class="formater-seta flex justify-center">
     <img  width="13" src="@/assets/search.svg">
       </div>
 
   <transition
-  enter-active-class="animate__animated animate__bounceIn"
-  leave-active-class="animate__animated animate__flipOutX"
+  enter-active-class="animate__animated animate__bounceIn-"
+  leave-active-class="animate__animated animate__flipOutX-"
   >
-          <div v-show="visible" ref="divF" class="abs" @mouseleave="verifyLeave()" @mouseenter="verifyEnter()">
+      <div v-show="visible" ref="divF" class="abs" @mouseleave="verifyLeave()" @mouseenter="verifyEnter()">
       <div class="item-c" @click="selecionado('Eriton')">Eriton</div>
       <div class="item-c" @click="selecionado('Marcos')">Marcos</div>
       <div class="item-c" @click="selecionado('Juarez')">Juarez</div>
@@ -152,12 +152,12 @@ input {
 }
 
 .item-c{
-  margin-left: -71%;
+
  color: #707070;
   cursor: pointer;
     font-size: 18px;
   font-weight: bold;
-    z-index: 3000;
+  margin-left: 10px;
 }
 
 .formater-seta{
@@ -165,9 +165,6 @@ input {
   width: 35px;
   height: 31px;
   border-radius: 0px 10px 10px 0px;
-  position: absolute;
-  z-index: 3000;
-  right: 16px;
 }
 
 </style>

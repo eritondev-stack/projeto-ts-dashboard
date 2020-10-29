@@ -1,15 +1,15 @@
 <template>
 <div>
-  <div class="d-flex title-op" :class="classe">
+  <div class="flex title-op">
     <span>{{ title }}</span>
   </div>
-    <div class="bordar d-flex">
+    <div class="bordar flex">
       <select ref="select" v-on:input="updateValue($event.target.value)">
         <option selected disabled>Selecionar</option>
         <option v-for="value in opcoes" :key="value">{{ value }}</option>
 
       </select>
-      <div @click="verificar()" class="formater-seta d-flex justify-content-center">
+      <div @click="verificar()" class="formater-seta flex justify-center">
     <img  width="13" src="@/assets/chevron-down-v.svg">
       </div>
     </div>
@@ -23,7 +23,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 @Component
 export default class SelectCustom extends Vue {
   @Prop() title!: string;
-  @Prop() classe!: string;
   @Prop() opcoes!: string[];
 
   $refs!: {
@@ -88,13 +87,9 @@ select {
 
 .formater-seta{
   background-color: #DCE3ED;
-  width: 35px;
+  width: 41px;
   height: 31px;
   border-radius: 0px 5px 5px 0px;
-  position: absolute;
-  z-index: 10;
-  right: 16px;
-
 }
 
 .title-op{
