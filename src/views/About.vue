@@ -18,7 +18,7 @@
 
   </div>
   <div class="text-cetelem-black">
-   Eriton
+    <div v-for="(value, index) in covid.Countries" :key="index"> {{ value.Country }}</div>
   </div>
   <div class="text-blue-500">
  {{ name }}
@@ -58,6 +58,7 @@ import Termometro from '@/components/Termometro.vue'
 import Oil from '@/components/Oil.vue'
 import SearchCustom from '@/components/SearchCustom.vue'
 import { namespace } from 'vuex-class'
+import { Covid } from '@/models/covidModel'
 const user = namespace('User')
 @Component({
   components: {
@@ -76,14 +77,20 @@ export default class About extends Vue {
  private percent = 0
  private search = null
 
-   @user.State
+  @user.State
   public name!: string
 
-   @user.Mutation
+  @user.State
+  public covid!: Covid
+
+  @user.Mutation
   public setTransL!: (newName: string) => void
 
   @user.Mutation
   public setTransE!: (newName: string) => void
+
+  @user.Getter
+  public upperCase!: () => void
 
   $refs!: {
    master: SVGSVGElement;
@@ -102,8 +109,8 @@ export default class About extends Vue {
  }
 
  home () {
-   this.setTransE('animate__animated animate__slideInLeft animate__faster')
-   this.setTransL('animate__animated animate__slideOutRight animate__faster')
+   this.setTransE('animate__animated animate__slideInLeft- animate__faster')
+   this.setTransL('animate__animated animate__slideOutRight- animate__faster')
    this.$router.push('/')
  }
 }
@@ -126,7 +133,7 @@ export default class About extends Vue {
 
   .btn-cetelem {
     background-color: theme('colors.cetelem.green');
-    color: white
+    color: theme('colors.teal.100')
   }
 
   .skeleton-box {

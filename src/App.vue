@@ -1,10 +1,11 @@
 <template>
   <div class="w-screen h-screen">
-    <transition
+<!--     <transition
     :enter-active-class="transE"
     :leave-active-class="transL">
     <router-view />
-    </transition>
+    </transition> -->
+       <router-view />
   </div>
 </template>
 
