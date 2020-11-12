@@ -7,6 +7,7 @@
       >
         Press me
       </button>
+        <router-link class="btn bg-teal-400 hover:bg-teal-500 text-white block mt-3" to="/projects" tag="button">Projetcs</router-link>
     </div>
     <div class="col-span-6">
       <InputCustom id="nome" placeholder="Digite seu nome" v-model="nome" />
@@ -19,50 +20,31 @@
           <th>Projeto</th>
           <th>Progressão</th>
           <th>Etapa</th>
-          <th>Jan</th>
-          <th>Fev</th>
-          <th>Mar</th>
-          <th>Abr</th>
-          <th>Mai</th>
-          <th>Jun</th>
-          <th>Jul</th>
-          <th>Ago</th>
-          <th>Set</th>
-          <th>Out</th>
-          <th>Nov</th>
-          <th>Dez</th>
+          <th style="width: 50px;">Jan</th>
+          <th style="width: 50px;">Fev</th>
+          <th style="width: 50px;">Mar</th>
+          <th style="width: 50px;">Abr</th>
+          <th style="width: 50px;">Mai</th>
+          <th style="width: 50px;">Jun</th>
+          <th style="width: 50px;">Jul</th>
+          <th style="width: 50px;">Ago</th>
+          <th style="width: 50px;">Set</th>
+          <th style="width: 50px;">Out</th>
+          <th style="width: 50px;">Nov</th>
+          <th style="width: 50px;">Dez</th>
         </thead>
 
-        <Projetos
+        <Projetos v-for="(value, index) in 12" :key="index"
           inicioDev="2020-01-01"
-          fimDev="2020-07-01"
-          inicioHom="2020-02-01"
-          fimHom="2020-09-01"
-          inicioPro="2020-06-01"
-          fimPro="2020-12-01"
+          fimDev="2020-03-01"
+          inicioHom="2020-03-01"
+          fimHom="2020-04-01"
+          inicioPro="2020-03-01"
+          fimPro="2020-10-01"
         >
-          <div>asdasdasds</div>
+          <div>{{ index }}</div>
         </Projetos>
 
-        <Projetos
-          inicioDev="2020-01-01"
-          fimDev="2020-07-01"
-          inicioHom="2020-02-01"
-          fimHom="2020-05-01"
-          inicioPro="2020-06-01"
-          fimPro="2020-12-01"
-        >
-        </Projetos>
-
-        <Projetos
-          inicioDev="2020-01-01"
-          fimDev="2020-07-01"
-          inicioHom="2020-02-01"
-          fimHom="2020-05-01"
-          inicioPro="2020-06-01"
-          fimPro="2020-12-01"
-        >
-        </Projetos>
       </table>
     </div>
   </div>
@@ -90,15 +72,7 @@ export default class Home extends Vue {
   @user.Mutation
   public updateName!: (newName: string) => void;
 
-  @user.Mutation
-  public setTransL!: (newName: string) => void;
-
-  @user.Mutation
-  public setTransE!: (newName: string) => void;
-
   about () {
-    this.setTransE('animate__animated animate__slideInRight- animate__faster')
-    this.setTransL('animate__animated animate__slideOutLeft- animate__faster')
     this.$router.push('/about')
   }
 
@@ -110,13 +84,11 @@ export default class Home extends Vue {
 </script>
 
 <style lang="scss" scoped>
-th {
-  border: 1px solid rgb(151, 151, 151);
+thead {
+  border: 1px solid rgb(211, 207, 207);
+  color: rgb(66, 66, 66);
 }
 
-td {
-  border: 1px solid rgb(151, 151, 151);
-}
 .btn {
   width: 50%;
   border-radius: 9px;

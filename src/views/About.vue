@@ -1,52 +1,75 @@
 <template>
+  <div class="p-10 bg-gray-100 w-full h-full absolute">
+    <div class="grid md:grid-cols-6 sm:grid-cols-2 gap-1">
+      <div>
+        <SearchCustom v-model="search" title="Nome Gestor" />
+      </div>
+      <div>
+        <SelectCustom :opcoes="opcoes" title="Opções" v-model="select" />
+      </div>
+      <div>
+        <InputCustom :opcoes="opcoes" title="Opções" v-model="select" />
+      </div>
+      <div>
+        <button
+          class="btn bg-red-500 hover:bg-red-600 text-white"
+          @click="home()"
+        >
+          Button
+        </button>
+      </div>
+      <div class="text-cetelem-black">
+        <div v-if="covid == undefined">Não encontrado</div>
+        <div v-else>
+          <div v-for="(value, index) in covid.Countries" :key="index">
+            {{ value.Country }}
+          </div>
+        </div>
+      </div>
+      <div class="text-blue-500">
+        {{ name }}
+      </div>
+      <div
+        class="col-span-2 border-gray-500 border flex flex-col justify-center items-center h-full"
+      >
+<div class="w-full">
+ <div ref="devteste" class="deslocar">
+   asdasd
+ </div>
+          <div @click="fechar()" class="h-4 relative w-full rounded-full overflow-hidden">
+          <div
+            class="w-full h-full bg-gray-200 absolute flex justify-end"
+          ></div>
+          <div
+            class="h-full transition-all duration-300 bg-green-500 absolute text-white text-xs flex justify-center"
+            style="width: 50%"
+          >
+            50%
+          </div>
+        </div>
+</div>
+      </div>
 
-<div class="p-10 bg-gray-100 w-full h-full absolute">
-<div class="grid md:grid-cols-6 sm:grid-cols-2 gap-1">
-  <div>
-          <SearchCustom v-model="search" title="Nome Gestor" />
-  </div>
-  <div>
-         <SelectCustom :opcoes="opcoes" title="Opções" v-model="select"/>
-  </div>
-  <div>
-         <InputCustom :opcoes="opcoes" title="Opções" v-model="select"/>
-  </div>
-  <div>
-   <button class="btn bg-red-500 hover:bg-red-600 text-white" @click="home()">
-  Button
-  </button>
-
-  </div>
-  <div class="text-cetelem-black">
-    <div v-for="(value, index) in covid.Countries" :key="index"> {{ value.Country }}</div>
-  </div>
-  <div class="text-blue-500">
- {{ name }}
-  </div>
-    <div class="col-span-2 border-gray-500 border flex flex-col justify-center items-center h-full">
-
-  <div class="h-4 relative w-full rounded-full overflow-hidden">
-        <div class="w-full h-full bg-gray-200 absolute"></div>
-        <div class="h-full transition-all duration-300 bg-green-500 absolute text-white text-xs flex justify-center" style="width:50%">50%</div>
+      <div class="col-span-2">
+        <div class="grid grid-cols-12 bg-white rounded-lg p-1">
+          <div
+            class="col-span-3 h-16 w-16 rounded-full mt-auto mb-auto bg-gray-200 skeleton-box"
+          ></div>
+          <div class="col-span-9">
+            <div class="grid grid-cols-6">
+              <div class="col-span-6 text-gray-600 skeleton-box m-1 h-5"></div>
+              <div
+                class="col-start-1 col-span-5 text-gray-600 skeleton-box m-1 h-5"
+              ></div>
+              <div
+                class="col-start-0 col-span-2 text-gray-600 skeleton-box m-1 h-5"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-
-  <div class="col-span-2">
-     <div class="grid grid-cols-12 bg-white rounded-lg p-1">
-   <div class="col-span-3 h-16 w-16 rounded-full mt-auto mb-auto bg-gray-200 skeleton-box"></div>
-   <div class="col-span-9">
-     <div class="grid grid-cols-6">
-     <div class="col-span-6 text-gray-600 skeleton-box m-1 h-5"></div>
-     <div class="col-start-1 col-span-5 text-gray-600 skeleton-box m-1 h-5"></div>
-     <div class="col-start-0 col-span-2 text-gray-600 skeleton-box m-1 h-5"></div>
-     </div>
-   </div>
-
-  </div>
-  </div>
-</div>
-</div>
-
 </template>
 
 <script lang="ts">
@@ -71,72 +94,100 @@ const user = namespace('User')
   }
 })
 export default class About extends Vue {
- private numberC = 0;
- private select = null;
- private opcoes = ['Eriton', 'Juarez', 'Kadma', 'Marcelo', 'Camila', 'Nana'];
- private percent = 0
- private search = null
+  private numberC = 0;
+  private select = null;
+  private opcoes = ['Eriton', 'Juarez', 'Kadma', 'Marcelo', 'Camila', 'Nana'];
+  private percent = 0;
+  private search = null;
 
   @user.State
-  public name!: string
+  public name!: string;
 
   @user.State
-  public covid!: Covid
+  public covid!: Covid;
 
   @user.Mutation
-  public setTransL!: (newName: string) => void
-
-  @user.Mutation
-  public setTransE!: (newName: string) => void
+  public setCovid!: (newName: Covid) => void;
 
   @user.Getter
-  public upperCase!: () => void
+  public upperCase!: () => void;
 
   $refs!: {
-   master: SVGSVGElement;
-  }
+    master: SVGSVGElement;
+    devteste: HTMLDivElement;
+  };
 
- @Watch('search')
+  @Watch('search')
   newValue (newValue: string) {
     console.log(newValue)
   }
 
- mounted () {
-   setInterval(() => {
-     this.numberC += 3000
-     this.percent += 1
-   }, 200)
- }
+  async mounted (): Promise<void> {
+    setInterval(() => {
+      this.numberC += 3000
+      this.percent += 1
+    }, 200)
+  }
 
- home () {
-   this.setTransE('animate__animated animate__slideInLeft- animate__faster')
-   this.setTransL('animate__animated animate__slideOutRight- animate__faster')
-   this.$router.push('/')
- }
+  home () {
+    this.$router.push('/')
+  }
+
+  fechar () {
+    if (this.$refs.devteste.style.display === 'block') {
+      this.$refs.devteste.style.display = 'none'
+    } else {
+      this.$refs.devteste.style.display = 'block'
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-.teste-number{
+.teste-number {
   color: blueviolet;
   font-weight: 500;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
 }
-  .btn {
-    width: 100%;
-    border-radius: 9px;
-    padding: 5px;
-    border: none;
-    outline:none;
-    cursor: pointer;
-  }
 
-  .btn-cetelem {
-    background-color: theme('colors.cetelem.green');
-    color: theme('colors.teal.100')
-  }
+.deslocar{
+margin-top: 25px;
+width: 300px;
+height: 200px;
+background-color: rgba(112, 20, 199, 0.658);
+position: absolute;
+color: rgb(255, 255, 255);
+transition: all 1s;
+}
 
-  .skeleton-box {
+.deslocar{
+margin-top: 25px;
+width: 300px;
+height: 200px;
+background-color: rgba(112, 20, 199, 0.658);
+position: absolute;
+color: rgb(255, 255, 255);
+transition: all 0.5s;
+z-index: 10000;
+display: none;
+}
+
+.btn {
+  width: 100%;
+  border-radius: 9px;
+  padding: 5px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.btn-cetelem {
+  background-color: theme("colors.cetelem.green");
+  color: theme("colors.teal.100");
+}
+
+.skeleton-box {
   position: relative;
   overflow: hidden;
   background-color: #e2e8f0;
@@ -156,7 +207,7 @@ export default class About extends Vue {
       rgba(255, 255, 255, 0)
     );
     animation: shimmer 3s infinite;
-    content: '';
+    content: "";
   }
 }
 @keyframes shimmer {
@@ -164,7 +215,6 @@ export default class About extends Vue {
     transform: translateX(100%);
   }
 }
-
 </style>
 
 <!--     <FlipNumber :´numberProp="numberC" classe="teste-number"/>

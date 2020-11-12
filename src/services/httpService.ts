@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Covid } from '@/models/covidModel'
 import http from './axios'
-import { Covid } from './covidModel'
 
 class HttpService {
   async getAll (): Promise<Covid> {

@@ -16,17 +16,12 @@
     <img  width="13" src="@/assets/search.svg">
       </div>
 
-  <transition
-  enter-active-class="animate__animated animate__bounceIn-"
-  leave-active-class="animate__animated animate__flipOutX-"
-  >
       <div v-show="visible" ref="divF" class="abs" @mouseleave="verifyLeave()" @mouseenter="verifyEnter()">
       <div class="item-c" @click="selecionado('Eriton')">Eriton</div>
       <div class="item-c" @click="selecionado('Marcos')">Marcos</div>
       <div class="item-c" @click="selecionado('Juarez')">Juarez</div>
       <div class="item-c" @click="selecionado('Camilo')">Camilo</div>
       </div>
-  </transition>
     </div>
   </div>
 </template>
