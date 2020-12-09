@@ -3,7 +3,7 @@ import { Covid } from '@/models/covidModel'
 @Module({ namespaced: true, name: 'User' })
 
 class User extends VuexModule {
-  public name = 'Eriton Gomes De Souza';
+  public name = '';
   public covid!: Covid;
 
   @Mutation

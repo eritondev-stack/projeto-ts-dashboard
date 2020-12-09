@@ -10,7 +10,8 @@ module.exports = {
     colors: {
       ...colors,
       cetelem: {
-        background: '#F5F5F5',
+        background: '#F1F4F9',
+        blue: '#0CA2F2',
         green: '#e74c3c',
         yellow: '#9b59b6',
         black: '#f1c40f'

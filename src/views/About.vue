@@ -1,6 +1,13 @@
 <template>
   <div class="p-10 bg-gray-100 w-full h-full absolute">
     <div class="grid md:grid-cols-6 sm:grid-cols-2 gap-1">
+     <div class="center">
+      <vs-checkbox color="rgb(59,222,200)" v-model="option">
+        <template #icon>
+     <i class='bx bxl-vuejs'></i>
+        </template>
+      </vs-checkbox>
+    </div>
       <div>
         <SearchCustom v-model="search" title="Nome Gestor" />
       </div>
@@ -25,6 +32,7 @@
             {{ value.Country }}
           </div>
         </div>
+        ,
       </div>
       <div class="text-blue-500">
         {{ name }}
@@ -32,11 +40,10 @@
       <div
         class="col-span-2 border-gray-500 border flex flex-col justify-center items-center h-full"
       >
-<div class="w-full">
- <div ref="devteste" class="deslocar">
-   asdasd
- </div>
-          <div @click="fechar()" class="h-4 relative w-full rounded-full overflow-hidden">
+        <div
+          @click="fechar()"
+          class="h-4 relative w-full rounded-full overflow-hidden"
+        >
           <div
             class="w-full h-full bg-gray-200 absolute flex justify-end"
           ></div>
@@ -47,7 +54,6 @@
             50%
           </div>
         </div>
-</div>
       </div>
 
       <div class="col-span-2">
@@ -67,6 +73,7 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -99,7 +106,7 @@ export default class About extends Vue {
   private opcoes = ['Eriton', 'Juarez', 'Kadma', 'Marcelo', 'Camila', 'Nana'];
   private percent = 0;
   private search = null;
-
+  private option = true
   @user.State
   public name!: string;
 
@@ -134,11 +141,7 @@ export default class About extends Vue {
   }
 
   fechar () {
-    if (this.$refs.devteste.style.display === 'block') {
-      this.$refs.devteste.style.display = 'none'
-    } else {
-      this.$refs.devteste.style.display = 'block'
-    }
+    console.log('Nada')
   }
 }
 </script>
@@ -150,29 +153,6 @@ export default class About extends Vue {
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", Arial, sans-serif;
 }
-
-.deslocar{
-margin-top: 25px;
-width: 300px;
-height: 200px;
-background-color: rgba(112, 20, 199, 0.658);
-position: absolute;
-color: rgb(255, 255, 255);
-transition: all 1s;
-}
-
-.deslocar{
-margin-top: 25px;
-width: 300px;
-height: 200px;
-background-color: rgba(112, 20, 199, 0.658);
-position: absolute;
-color: rgb(255, 255, 255);
-transition: all 0.5s;
-z-index: 10000;
-display: none;
-}
-
 .btn {
   width: 100%;
   border-radius: 9px;

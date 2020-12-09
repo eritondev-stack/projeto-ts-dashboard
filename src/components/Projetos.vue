@@ -1,25 +1,110 @@
 <template>
   <tbody>
-    <tr ref="dev">
-      <td class="inf-table w-24 text-center" rowspan="3" @click="hidden()">Cartões</td>
-      <td class="inf-table w-24 text-center" rowspan="3">98%</td>
-      <td class="inf-table w-40" >Desenvolvimento</td>
+    <tr ref="dev" class="bg-white">
+      <td class="w-40 text-center cursor-pointer" :style="`border-left: 5px solid ${color};`" rowspan="3" @click="hidden()">
+        Cartões
+      </td>
+      <td class="inf-table w-24 text-center" rowspan="3">
+        15%
+     <!--    <div class="" ref="chart"></div> -->
+      </td>
+      <td class="inf-table w-40">Desenvolvimento</td>
+      <td
+        class="td-custom"
+        v-for="value in dev"
+        :key="value.value"
+        :colspan="value.colSpan"
+      >
+        <template v-if="value.colSpan === 1"></template>
+         <vs-tooltip top v-else :color="color" border shadow>
+        <div @click="active=!active"  class="col-span-2 flex flex-col justify-center items-center h-full cursor-pointer select-none" >
+          <div class="h-4 relative w-full rounded-full overflow-hidden" >
+            <div class="w-full h-full bg-gray-300 absolute flex justify-end"></div>
+            <div class="h-full transition-all duration-300 absolute text-white text-xs flex justify-center" :style="`width: ${progressDev}%; background-color: ${color};`">
+              {{ progressDev }}%
+            </div>
+          </div>
+        </div>
+
+      <template #tooltip>
+         {{ inicioDev | dayBr }} até  {{ fimDev | dayBr  }}
+       </template>
+
+         </vs-tooltip>
+
+      </td>
     </tr>
 
-    <tr ref="hom">
+    <tr ref="hom" class="bg-white">
       <td class="inf-table w-40">Homologação</td>
+            <td
+        class="td-custom"
+        v-for="value in hom"
+        :key="value.value"
+        :colspan="value.colSpan"
+      >
+        <template v-if="value.colSpan === 1"></template>
+        <div @click="active=!active" v-else class="col-span-2 flex flex-col justify-center items-center h-full cursor-pointer" >
+          <div class="h-4 relative w-full rounded-full overflow-hidden" >
+            <div class="w-full h-full bg-gray-300 absolute flex justify-end"></div>
+            <div class="h-full transition-all duration-300 bg-green-500 absolute text-white text-xs flex justify-center" :style="`width: ${progressHom}%; background-color: ${color};`">
+              {{ progressHom }}%
+            </div>
+          </div>
+        </div>
+      </td>
     </tr>
 
-    <tr ref="prod">
+    <tr ref="prod" class="bg-white">
       <td class="inf-table">Produção</td>
+            <td
+        class="td-custom"
+        v-for="value in prod"
+        :key="value.value"
+        :colspan="value.colSpan"
+      >
+        <template v-if="value.colSpan === 1"></template>
+        <div @click="active=!active" v-else class="col-span-2 flex flex-col justify-center items-center h-full cursor-pointer" >
+          <div class="h-4 relative w-full rounded-full overflow-hidden" >
+            <div class="w-full h-full bg-gray-300 absolute flex justify-end"></div>
+            <div class="h-full transition-all duration-300 bg-green-500 absolute text-white text-xs flex justify-center" :style="`width: ${progressProd}%; background-color: ${color};`">
+              {{ progressProd }}%
+            </div>
+          </div>
+        </div>
+      </td>
     </tr>
     <tr>
-        <td class="inf-table" v-show="visivel" colspan="15">
-          <slot></slot>
-        </td>
+      <td class="inf-table bg-white" v-show="visivel" colspan="369">
+        <slot></slot>
+      </td>
     </tr>
+    <tr colspan="383" height="10"></tr>
+     <vs-dialog blur overflow-hidden v-model="active">
+          <div>
+             <div>
+               <span><i class='bx bxs-edit-alt text-4xl text-cetelem-blue'></i></span>
+               <span class="text-2xl ml-2">Editar Data</span>
+             </div>
 
-    <tr colspan="15" height="10"></tr>
+          <div class="flex flex-col justify-center items-center w-full">
+              <div class="mt-3 w-64">
+                <span>Data Início</span>
+                  <vs-input  v-model="dataInicio" v-mask="'##/##/####'"  placeholder="DD/MM/AAAA"/>
+              </div>
+
+              <div class="mt-3 w-64">
+                <span>Data Fim</span>
+                  <vs-input v-model="dataFim" v-mask="'##/##/####'"  placeholder="DD/MM/AAAA"/>
+              </div>
+    <div class="mt-4 w-64">
+  <vs-button color="#0CA2F2" block > <span class="text-base">Salvar</span> </vs-button>
+    </div>
+
+          </div>
+          </div>
+
+      </vs-dialog>
   </tbody>
 </template>
 
@@ -27,7 +112,12 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import moment from 'moment'
 import Progress from '@/components/Progress.vue'
-const dateNow = '2020-09-01'
+/* import ApexCharts from 'apexcharts' */
+const dateNow = '2020-05-15'
+interface ModelDataStartAndEnd {
+  id: number;
+  dataRef: string;
+}
 
 @Component({
   components: {
@@ -35,19 +125,30 @@ const dateNow = '2020-09-01'
   }
 })
 export default class HelloWorld extends Vue {
-  visivel = false;
+  $refs!: {
+    chart: HTMLDivElement;
+  }
+
+  private visivel = false;
   @Prop() inicioDev!: string;
   @Prop() fimDev!: string;
+  @Prop() idProject!: string;
   @Prop() inicioHom!: string;
   @Prop() fimHom!: string;
   @Prop() inicioPro!: string;
   @Prop() fimPro!: string;
-
-  $refs!: {
-    dev: HTMLTableRowElement;
-    hom: HTMLTableRowElement;
-    prod: HTMLTableRowElement;
-  };
+  @Prop({ default: 'rgb(190,190,190)' }) color!: string;
+  @Prop() arrayDate!: ModelDataStartAndEnd[];
+  private visible2 = false;
+  private active = false
+  private hom: { colSpan: number}[] = [];
+  private dev: { colSpan: number}[] = [];
+  private prod: { colSpan: number}[] = [];
+  private progressDev = '';
+  private progressHom = '';
+  private progressProd = '';
+  private dataInicio = ''
+  private dataFim = ''
 
   hidden () {
     this.visivel = !this.visivel
@@ -55,12 +156,41 @@ export default class HelloWorld extends Vue {
 
   mounted () {
     this.calculator()
-    const btn = document.querySelectorAll('.overflow-hidden')
-    btn.forEach(e => e.addEventListener('click', this.todos))
+    /*     const options = {
+      series: [70],
+      chart: {
+        width: 130,
+        type: 'radialBar'
+      },
+      plotOptions: {
+        radialBar: {
+          hollow: {
+            size: '30%'
+          },
+          dataLabels: {
+            name: {
+              show: false,
+              offsetY: -10,
+              color: '#fff',
+              fontSize: '13px'
+            },
+            value: {
+              color: '#fff',
+              fontSize: '30px',
+              show: false
+            }
+          }
+        }
+      },
+      labels: ['']
+    }
+
+    const chart = new ApexCharts(this.$refs.chart, options)
+    chart.render() */
   }
 
-  todos (e: Event) {
-    console.log(e.target)
+  close () {
+    this.visible2 = false
   }
 
   calculator () {
@@ -69,99 +199,126 @@ export default class HelloWorld extends Vue {
     this.fillCalendar('prod', this.inicioPro, this.fimPro)
   }
 
+  searchIdByMonth (date: string): number {
+    for (let index = 0; index < this.arrayDate.length; index++) {
+      if (this.arrayDate[index].dataRef === date) {
+        return this.arrayDate[index].id
+      }
+    }
+    return 9999
+  }
+
   fillCalendar (etapa: string, dtInicio: string, dtFim: string) {
-    let tr!: HTMLTableRowElement
-
-    // eslint-disable-next-line eqeqeq
-    if (etapa === 'dev') {
-      tr = this.$refs[etapa]
-    }
-
-    // eslint-disable-next-line eqeqeq
-    if (etapa === 'hom') {
-      tr = this.$refs[etapa]
-    }
-
-    // eslint-disable-next-line eqeqeq
-    if (etapa === 'prod') {
-      tr = this.$refs[etapa]
-    }
-
-    const monthStarter = Number(moment(dtInicio).format('MM'))
-    const monthEnd = Number(moment(dtFim).format('MM'))
-    const totColSpan = monthEnd - monthStarter + 1
+    const dayStarter = this.searchIdByMonth(dtInicio)
+    const dayEnd = this.searchIdByMonth(dtFim)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const totColSpan = dayEnd - dayStarter
     // get total days complete project
     const totDiasComplete = moment(dtFim).diff(moment(dtInicio), 'days')
-    // get days current progress project
+
     let totDiasCurrent = 0
 
     if (moment(dateNow).toDate() > moment(dtInicio).toDate()) {
       totDiasCurrent = moment(dateNow).diff(moment(dtInicio), 'days')
     }
-    // console.log(totDiasCurrent)
 
-    const percentProject = ((totDiasCurrent / totDiasComplete) * 100) > 100 ? 100 : ((totDiasCurrent / totDiasComplete) * 100)
+    const percentProject = (totDiasCurrent / totDiasComplete) * 100 > 100 ? 100 : (totDiasCurrent / totDiasComplete) * 100
+    console.log(percentProject)
 
-    const attr = tr.attributes[0].nodeName
-    for (let index = 0; index < 14; index++) {
-      // eslint-disable-next-line eqeqeq
-      if (index == 0) {
+    for (let index = 0; index < 368; index++) {
+      if (index === 0) {
+        if (etapa === 'dev') {
+          this.dev = []
+          this.progressDev = percentProject.toFixed(0)
+        }
+
+        if (etapa === 'hom') {
+          this.hom = []
+          this.progressHom = percentProject.toFixed(0)
+        }
+
+        if (etapa === 'prod') {
+          this.prod = []
+          this.progressProd = percentProject.toFixed(0)
+        }
+
         continue
       }
-      if (index === monthStarter) {
-        const tdCustom = tr.insertCell(-1)
-        tdCustom.setAttribute(attr, '')
-        tdCustom.setAttribute('id', etapa)
-        tdCustom.setAttribute('colspan', String(totColSpan))
-        const progress = `
-        <div class="h-4 relative w-full rounded-full overflow-hidden">
-        <div class="w-full h-full bg-indigo-200 absolute"></div>
-        <div class="h-full transition-all duration-300 bg-indigo-500 absolute text-white text-xs flex justify-center" style="width: ${percentProject.toFixed(0)}% "> ${percentProject < 5 ? '' : percentProject.toFixed(0) + '%'} </div>
-        </div>
-        `
-        tdCustom.insertAdjacentHTML('afterbegin', progress)
-      }
-      if (index < monthStarter || index > monthEnd) {
-        if (index === monthEnd + 1) {
-          if (etapa === 'prod') {
-            const tdCustom = tr.insertCell(-1)
-            tdCustom.setAttribute(attr, '')
-            const flag = `<svg width="20" id="Capa_1" enable-background="new 0 0 512.047 512.047" viewBox="0 0 512.047 512.047" xmlns="http://www.w3.org/2000/svg"><g><path d="m86.842 43.282s114.005-79.507 220.713-12.494c69.74 43.797 123.5 30.884 152.378 16.681 11.181-5.499 23.625 3.843 23.625 17.781v225.297c0 6.811-3.13 13.099-8.22 16.62-21.303 14.734-82.63 45.803-167.783-7.673-106.708-67.013-220.713 12.494-220.713 12.494z" fill="#f9fbfc"/><g fill="#eaa895"><path d="m126.497 24.74c1.723 0 3.119-1.396 3.119-3.119 0-.127-.023-.248-.037-.371-1.892.761-3.735 1.525-5.523 2.291.571.725 1.446 1.199 2.441 1.199z"/><path d="m136.93 28.178c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c.044 0 .084-.011.128-.013v-6.212c-.044-.002-.085-.013-.128-.013z"/><path d="m126.497 38.61c-1.723 0-3.119 1.396-3.119 3.119 0 1.722 1.396 3.119 3.119 3.119s3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m136.93 48.286c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c.044 0 .084-.011.128-.013v-6.212c-.044-.002-.085-.013-.128-.013z"/><path d="m126.497 58.718c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.397 3.119-3.119-1.396-3.119-3.119-3.119z"/><path d="m136.93 68.394c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c.044 0 .084-.011.128-.013v-6.212c-.044-.002-.085-.013-.128-.013z"/><path d="m126.497 78.826c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m136.93 88.502c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c.044 0 .084-.011.128-.013v-6.212c-.044-.002-.085-.013-.128-.013z"/><path d="m126.497 98.934c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m136.93 108.61c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c.044 0 .084-.011.128-.013v-6.212c-.044-.002-.085-.013-.128-.013z"/><path d="m126.497 119.043c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.396-3.119-3.119-3.119z"/><path d="m136.93 128.718c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c.044 0 .084-.011.128-.013v-6.212c-.044-.002-.085-.013-.128-.013z"/><path d="m126.497 139.15c-1.723 0-3.119 1.396-3.119 3.119 0 1.722 1.396 3.119 3.119 3.119s3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m136.93 148.826c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c.044 0 .084-.011.128-.013v-6.212c-.044-.002-.085-.013-.128-.013z"/><path d="m126.497 159.258c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m136.93 168.934c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c.044 0 .084-.011.128-.013v-6.212c-.044-.002-.085-.013-.128-.013z"/><path d="m126.497 179.366c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m136.93 189.042c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c.044 0 .084-.011.128-.013v-6.212c-.044-.002-.085-.013-.128-.013z"/><path d="m126.497 199.474c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m136.93 209.15c-1.723 0-3.119 1.397-3.119 3.119 0 1.723 1.396 3.119 3.119 3.119.044 0 .084-.011.128-.013v-6.212c-.044-.002-.085-.013-.128-.013z"/><path d="m126.497 219.583c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.396-3.119-3.119-3.119z"/><path d="m136.93 229.258c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c.044 0 .084-.011.128-.013v-6.212c-.044-.002-.085-.013-.128-.013z"/><path d="m126.497 239.69c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m136.93 249.366c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c.044 0 .084-.011.128-.013v-6.212c-.044-.002-.085-.013-.128-.013z"/><path d="m126.497 259.798c-1.723 0-3.119 1.397-3.119 3.119 0 1.723 1.396 3.119 3.119 3.119s3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m133.811 272.593c0 1.723 1.396 3.119 3.119 3.119.044 0 .084-.011.128-.013v-6.212c-.043-.002-.084-.013-.128-.013-1.723 0-3.119 1.396-3.119 3.119z"/><path d="m126.497 279.906c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m116.822 28.178c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.397-3.119-3.119-3.119z"/><path d="m106.389 38.61c-1.722 0-3.119 1.396-3.119 3.119 0 1.722 1.396 3.119 3.119 3.119s3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m116.822 48.286c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.397-3.119-3.119-3.119z"/><path d="m106.389 58.718c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.397 3.119-3.119-1.396-3.119-3.119-3.119z"/><path d="m116.822 68.394c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.397-3.119-3.119-3.119z"/><path d="m106.389 78.826c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m116.822 88.502c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.397-3.119-3.119-3.119z"/><path d="m106.389 98.934c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m116.822 108.61c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.397-3.119-3.119-3.119z"/><path d="m106.389 119.043c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.396-3.119-3.119-3.119z"/><path d="m116.822 128.718c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.397-3.119-3.119-3.119z"/><path d="m106.389 139.15c-1.722 0-3.119 1.396-3.119 3.119 0 1.722 1.396 3.119 3.119 3.119s3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m116.822 148.826c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.397-3.119-3.119-3.119z"/><path d="m106.389 159.258c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m116.822 168.934c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.397-3.119-3.119-3.119z"/><path d="m106.389 179.366c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m116.822 189.042c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.397-3.119-3.119-3.119z"/><path d="m106.389 199.474c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m116.822 209.15c-1.722 0-3.119 1.397-3.119 3.119 0 1.723 1.396 3.119 3.119 3.119s3.119-1.396 3.119-3.119-1.397-3.119-3.119-3.119z"/><path d="m106.389 219.583c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.396-3.119-3.119-3.119z"/><path d="m116.822 229.258c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.397-3.119-3.119-3.119z"/><path d="m106.389 239.69c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m116.822 249.366c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119-1.397-3.119-3.119-3.119z"/><path d="m106.389 259.798c-1.722 0-3.119 1.397-3.119 3.119 0 1.723 1.396 3.119 3.119 3.119s3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m116.822 269.474c-1.722 0-3.119 1.397-3.119 3.119 0 1.723 1.396 3.119 3.119 3.119s3.119-1.397 3.119-3.119c0-1.723-1.397-3.119-3.119-3.119z"/><path d="m106.389 279.906c-1.722 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119 3.119-1.396 3.119-3.119c0-1.722-1.396-3.119-3.119-3.119z"/><path d="m116.822 289.582c-1.722 0-3.119 1.396-3.119 3.119 0 1.51 1.073 2.768 2.498 3.057 1.079-.503 2.19-1.01 3.319-1.518.26-.455.421-.976.421-1.538 0-1.724-1.397-3.12-3.119-3.12z"/><path d="m103.449 302.131c1.205-.645 2.468-1.307 3.789-1.985-.272-.077-.553-.132-.85-.132-1.369 0-2.52.889-2.939 2.117z"/><path d="m86.842 44.792c1.454-.265 2.558-1.532 2.558-3.062 0-.044-.011-.083-.013-.126-1.663 1.064-2.546 1.678-2.546 1.678v1.51z"/><path d="m96.714 48.286c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c1.722 0 3.119-1.396 3.119-3.119s-1.397-3.119-3.119-3.119z"/><path d="m86.842 58.775v6.125c1.454-.265 2.558-1.532 2.558-3.062 0-1.531-1.104-2.798-2.558-3.063z"/><path d="m96.714 68.394c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c1.722 0 3.119-1.396 3.119-3.119s-1.397-3.119-3.119-3.119z"/><path d="m86.842 78.883v6.125c1.454-.265 2.558-1.532 2.558-3.062s-1.104-2.798-2.558-3.063z"/><path d="m96.714 88.502c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c1.722 0 3.119-1.396 3.119-3.119s-1.397-3.119-3.119-3.119z"/><path d="m86.842 98.991v6.125c1.454-.265 2.558-1.532 2.558-3.062 0-1.531-1.104-2.798-2.558-3.063z"/><path d="m96.714 108.61c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c1.722 0 3.119-1.396 3.119-3.119s-1.397-3.119-3.119-3.119z"/><path d="m86.842 119.099v6.125c1.454-.265 2.558-1.532 2.558-3.062 0-1.531-1.104-2.798-2.558-3.063z"/><path d="m96.714 128.718c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c1.722 0 3.119-1.396 3.119-3.119s-1.397-3.119-3.119-3.119z"/><path d="m86.842 139.207v6.124c1.454-.265 2.558-1.532 2.558-3.062s-1.104-2.797-2.558-3.062z"/><path d="m96.714 148.826c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c1.722 0 3.119-1.396 3.119-3.119s-1.397-3.119-3.119-3.119z"/><path d="m86.842 159.315v6.125c1.454-.265 2.558-1.532 2.558-3.062 0-1.531-1.104-2.798-2.558-3.063z"/><path d="m96.714 168.934c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c1.722 0 3.119-1.396 3.119-3.119s-1.397-3.119-3.119-3.119z"/><path d="m86.842 179.423v6.125c1.454-.265 2.558-1.532 2.558-3.062 0-1.531-1.104-2.798-2.558-3.063z"/><path d="m96.714 189.042c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c1.722 0 3.119-1.396 3.119-3.119s-1.397-3.119-3.119-3.119z"/><path d="m86.842 199.531v6.125c1.454-.265 2.558-1.532 2.558-3.062 0-1.531-1.104-2.798-2.558-3.063z"/><path d="m96.714 209.15c-1.723 0-3.119 1.397-3.119 3.119 0 1.723 1.396 3.119 3.119 3.119 1.722 0 3.119-1.396 3.119-3.119s-1.397-3.119-3.119-3.119z"/><path d="m86.842 219.639v6.125c1.454-.265 2.558-1.532 2.558-3.062 0-1.531-1.104-2.798-2.558-3.063z"/><path d="m96.714 229.258c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c1.722 0 3.119-1.396 3.119-3.119s-1.397-3.119-3.119-3.119z"/><path d="m86.842 239.747v6.125c1.454-.265 2.558-1.532 2.558-3.062 0-1.531-1.104-2.798-2.558-3.063z"/><path d="m96.714 249.366c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c1.722 0 3.119-1.396 3.119-3.119s-1.397-3.119-3.119-3.119z"/><path d="m86.842 259.855v6.125c1.454-.265 2.558-1.532 2.558-3.062 0-1.531-1.104-2.798-2.558-3.063z"/><path d="m96.714 269.474c-1.723 0-3.119 1.397-3.119 3.119 0 1.723 1.396 3.119 3.119 3.119 1.722 0 3.119-1.397 3.119-3.119 0-1.723-1.397-3.119-3.119-3.119z"/><path d="m86.842 279.963v6.125c1.454-.265 2.558-1.532 2.558-3.062 0-1.531-1.104-2.798-2.558-3.063z"/><path d="m96.714 289.582c-1.723 0-3.119 1.396-3.119 3.119s1.396 3.119 3.119 3.119c1.722 0 3.119-1.397 3.119-3.119 0-1.723-1.397-3.119-3.119-3.119z"/><path d="m89.4 303.133c0-1.53-1.104-2.798-2.558-3.062v6.125c1.454-.265 2.558-1.532 2.558-3.063z"/></g><path d="m67.596 508.025h-19.908c-10.603 0-19.198-8.595-19.198-19.198v-448.591c0-10.603 8.595-19.198 19.198-19.198h19.908c10.603 0 19.198 8.595 19.198 19.198v448.591c0 10.603-8.595 19.198-19.198 19.198z" fill="#e9c278"/><g fill="#31373d"><path d="m325.963 175.605v68.03c31.962 16.293 60.081 20.749 83.383 19.426v-68.03c-23.302 1.323-51.421-3.133-83.383-19.426z"/><path d="m159.197 145.723v68.03c24.403-6.482 53.165-10.028 83.383-5.185v-68.03c-30.219-4.844-58.98-1.299-83.383 5.185z"/><path d="m307.555 165.141c6.269 3.937 12.405 7.403 18.409 10.464v-68.03c-6.004-3.061-12.14-6.528-18.409-10.464-21.697-13.625-43.694-21.192-64.975-24.603v68.03c21.28 3.41 43.278 10.977 64.975 24.603z"/><path d="m476.84 44.817c-5.786-3.603-12.595-3.952-18.682-.958-31.27 15.38-82.41 25.005-148.464-16.477-56.361-35.394-114.625-30.061-153.578-19.354-31.4 8.63-55.169 21.74-65.678 28.163-1.964-10.887-11.502-19.175-22.947-19.175h-19.699c-12.861 0-23.324 10.463-23.324 23.323v448.385c0 12.86 10.463 23.323 23.324 23.323h19.701c12.861 0 23.324-10.463 23.324-23.323v-174.548c6.598-4.279 32.328-20.038 67.433-29.687 37.397-10.28 93.285-15.428 147.168 18.41 36.807 23.115 69.28 30.819 96.221 30.818 36.477-.001 62.807-14.126 75.987-23.243 6.234-4.311 9.955-11.761 9.955-19.928v-225.297c-.002-8.607-4.017-16.245-10.741-20.432zm-394.068 443.907c0 8.425-6.855 15.28-15.28 15.28h-19.7c-8.426 0-15.28-6.855-15.28-15.28v-448.385c0-8.425 6.855-15.28 15.28-15.28h19.701c8.425 0 15.28 6.855 15.28 15.28v448.385zm243.191-183.288v-61.801c-6.004-3.061-12.14-6.528-18.408-10.464-21.697-13.626-43.694-21.192-64.975-24.604v62.346c-9.893-1.542-19.569-2.207-28.902-2.207-20.197 0-38.788 3.116-54.481 7.203v-62.157c-33.586 8.922-58.902 23.414-68.334 29.301v-68.03c9.432-5.887 34.748-20.378 68.334-29.301v-68.03c-33.586 8.923-58.902 23.414-68.334 29.301v-61.555c6.702-4.341 32.397-20.038 67.385-29.655.314-.087.632-.171.948-.257v62.167c24.403-6.482 53.165-10.028 83.383-5.185v-62.139c20.437 3.339 41.789 10.607 62.836 23.825 6.855 4.305 13.707 8.162 20.547 11.568v61.813c31.962 16.292 60.081 20.749 83.383 19.425v-62.298c18.367-.995 35.951-5.554 52.361-13.625 3.592-1.767 7.456-1.564 10.882.568 4.285 2.667 6.947 7.88 6.947 13.604v36.517c-1.543 1.13-3.12 2.272-4.199 3.018-11.386 7.875-34.21 20.412-65.991 22.217v68.03c31.781-1.805 54.605-14.342 65.991-22.217 1.079-.746 2.656-1.887 4.199-3.018v68.03c-1.543 1.131-3.12 2.272-4.199 3.018-11.386 7.875-34.21 20.413-65.991 22.217l.043 62.336c-23.197 1.358-51.318-3.202-83.425-19.961z"/></g></g></svg>
-`
-            tdCustom.insertAdjacentHTML('afterbegin', flag)
-          } else {
-            const tdCustom = tr.insertCell(-1)
-            tdCustom.setAttribute(attr, '')
-          }
-        } else {
-          const tdCustom = tr.insertCell(-1)
-          tdCustom.setAttribute(attr, '')
+
+      if (index === dayStarter) {
+        if (etapa === 'dev') {
+          this.dev.push({
+            colSpan: totColSpan
+          })
         }
+
+        if (etapa === 'hom') {
+          this.hom.push({
+            colSpan: totColSpan
+          })
+        }
+
+        if (etapa === 'prod') {
+          this.prod.push({
+            colSpan: totColSpan
+          })
+        }
+        continue
+      }
+
+      if (index < dayStarter || index > dayEnd) {
+        if (etapa === 'dev') {
+          this.dev.push({
+            colSpan: 1
+          })
+        }
+
+        if (etapa === 'hom') {
+          this.hom.push({
+            colSpan: 1
+          })
+        }
+
+        if (etapa === 'prod') {
+          this.prod.push({
+            colSpan: 1
+          })
+        }
+      } else {
       }
     }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 
-tbody{
-    color: rgb(66, 66, 66);
-    transition: all 0.2s;
-    font-size: 15px;
+.vs-dialog-content.blur {
+    -webkit-backdrop-filter: saturate(110%) blur(2px) !important;
+    backdrop-filter: saturate(110%) blur(2px) !important;
+}
+
+tbody {
+  color: rgb(66, 66, 66);
+  transition: all 0.1s;
+  font-size: 15px;
 }
 
 tr {
   border: 1px solid rgb(211, 207, 207);
 }
 
-tbody:hover{
-  background-color: rgb(229, 226, 226);
+.td-custom {
+  // Only nothing
+  padding: 0.5px;
 }
 
-.inf-table{
-   border: 1px solid rgb(211, 207, 207);
+tbody:hover {
+  background-color: rgb(247, 245, 245);
+}
+
+.inf-table {
+  border: 1px solid rgb(211, 207, 207);
 }
 
 .back {
